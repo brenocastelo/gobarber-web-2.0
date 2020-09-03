@@ -1,14 +1,20 @@
 import React from 'react';
 
 import SignIn from './pages/SignIn';
-
 import GlobalStyles from './styles/global';
 
-const App: React.FC = () => (
-  <>
-    <SignIn />
-    <GlobalStyles />
-  </>
-);
+import AppProvider from './context';
+
+const App: React.FC = () => {
+  return (
+    <>
+      <AppProvider>
+        <SignIn />
+      </AppProvider>
+
+      <GlobalStyles />
+    </>
+  );
+};
 
 export default App;
