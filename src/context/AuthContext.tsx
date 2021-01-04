@@ -2,10 +2,17 @@ import React, { createContext, useCallback, useContext, useState } from 'react';
 
 import api from '../services/api';
 
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  avatar_url: string;
+}
+
 // object para evitar dependências de dados da api
 interface AuthState {
   token: string;
-  user: object;
+  user: User;
 }
 
 interface SigInCredentials {
@@ -14,9 +21,10 @@ interface SigInCredentials {
 }
 
 interface AuthContextData {
-  user: object;
+  user: User;
   signIn(credentials: SigInCredentials): Promise<void>;
   signOut(): void;
+  updateUser(user: User): void;
 }
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
@@ -27,6 +35,8 @@ const AuthProvider: React.FC = ({ children }) => {
     const user = localStorage.getItem('@GoBarber:user');
 
     if (token && user) {
+      api.defaults.headers.authorization = `Bearer ${token}`;
+
       return {
         token,
         user: JSON.parse(user),
@@ -44,6 +54,8 @@ const AuthProvider: React.FC = ({ children }) => {
     localStorage.setItem('@GoBarber:token', token);
     localStorage.setItem('@GoBarber:user', JSON.stringify(user));
 
+    api.defaults.headers.authorization = `Bearer ${token}`;
+
     setAuthData({ token, user });
   }, []);
 
@@ -54,8 +66,22 @@ const AuthProvider: React.FC = ({ children }) => {
     setAuthData({} as AuthState);
   }, []);
 
+  const updateUser = useCallback(
+    (user: User) => {
+      setAuthData({
+        token: authData.token,
+        user,
+      });
+
+      localStorage.setItem('@GoBarber:user', JSON.stringify(user));
+    },
+    [authData.token],
+  );
+
   return (
-    <AuthContext.Provider value={{ user: authData.user, signIn, signOut }}>
+    <AuthContext.Provider
+      value={{ user: authData.user, signIn, signOut, updateUser }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -68,9 +94,9 @@ function useAuth(): AuthContextData {
     throw new Error('useAuth must be within an AuthProvider context');
   }
 
-  const { user, signIn, signOut } = context;
+  const { user, signIn, signOut, updateUser } = context;
 
-  return { user, signIn, signOut };
+  return { user, signIn, signOut, updateUser };
 }
 
 export { AuthProvider, useAuth };

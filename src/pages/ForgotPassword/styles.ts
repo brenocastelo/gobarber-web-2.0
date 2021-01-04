@@ -1,15 +1,9 @@
 import styled, { keyframes } from 'styled-components';
 import { shade } from 'polished';
 
-import background from '../../assets/sign-up-background.png';
+import background from '../../assets/sign-in-background.png';
 
 export const Container = styled.div`
-  /*
-    * faz com que a página tente ocupar todo espaço de tela
-    * isso pode levar a problemas quando a tela tem muitos elementos e
-    * alguns vão encolhendo
-    * ex: header da tela de perfil
-   */
   height: 100vh;
 
   display: flex;
@@ -24,56 +18,17 @@ export const Content = styled.div`
 
   width: 100%;
   max-width: 700px;
-
-  form {
-    margin: 80px 0;
-    width: 340px;
-    text-align: center;
-
-    h1 {
-      margin-bottom: 20px;
-    }
-
-    a {
-      display: block;
-      margin-top: 24px;
-      text-decoration: none;
-      color: #f4ede8;
-      transition: color 0.2s;
-
-      &:hover {
-        color: ${shade(0.2, '#f4ede8')};
-      }
-    }
-  }
-
-  > a {
-    display: flex;
-    align-items: center;
-    margin-top: 24px;
-    text-decoration: none;
-    color: #f4ede8;
-    transition: color 0.2s;
-
-    &:hover {
-      color: ${shade(0.2, '#f4ede8')};
-    }
-
-    svg {
-      margin-right: 18px;
-    }
-  }
 `;
 
-const appearFromRight = keyframes`
+const appearFromLeft = keyframes`
   from {
     opacity: 0;
-    transform: translateX(50px);
+    transform: translateX(-50px)
   }
 
   to {
     opacity: 1;
-    transform: translateX(0px);
+    transform: translateX(0)
   }
 `;
 
@@ -81,7 +36,7 @@ export const AnimationContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  animation: ${appearFromRight} 1s;
+  animation: ${appearFromLeft} 1s;
 
   form {
     margin: 80px 0;
